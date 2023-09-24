@@ -13,19 +13,22 @@ import java.sql.Connection;
 import javax.swing.JOptionPane;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class ProdutosDAO {
     
-    Connection conn;
-    PreparedStatement prep;
-    ResultSet resultset;
-    ArrayList<ProdutosDTO> listagem = new ArrayList<>();
+     private Conexao conexao;
+    private Connection conn;
+    
+    public ProdutosDAO(){
+        this.conexao = new Conexao();
+        this.conn = this.conexao.getConexao();
+    }
     
    
     
     public void cadastrarProduto (ProdutosDTO produto){
-        conn = new conectaDAO().connectDB();
         String sql = "INSERT INTO produtos (nome, valor, status) VALUES "
                 + "(?, ?, ? ) ";
         
@@ -41,14 +44,32 @@ public class ProdutosDAO {
         catch (Exception e){
             System.out.println("Erro ao inserir produto: " + e.getMessage());
         }
-       
-        
-         conn = new conectaDAO().connectDB(); 
+
     }
     
-    public ArrayList<ProdutosDTO> listarProdutos(){
+    public List<ProdutosDTO> getProdutos(){
+        String sql = "SELECT * FROM produtos";
         
-        return listagem;
+        try{
+            PreparedStatement stmt = this.conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            List<ProdutosDTO> listaProdutos = new ArrayList<>();
+            while(rs.next()){
+               ProdutosDTO produtosDTO = new ProdutosDTO();
+               
+               produtosDTO.setId(rs.getInt("id"));
+               produtosDTO.setNome(rs.getString("nome"));
+               produtosDTO.setValor(rs.getInt("valor"));
+               produtosDTO.setStatus(rs.getString("status"));
+               
+               listaProdutos.add(produtosDTO);
+            }
+            return listaProdutos;
+        } catch (Exception e){
+            return null;
+        }
+        
+       
     }
     
     
