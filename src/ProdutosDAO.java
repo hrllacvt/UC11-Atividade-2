@@ -47,6 +47,21 @@ public class ProdutosDAO {
 
     }
     
+     public void setVendido (ProdutosDTO produto){
+            String sql = " UPDATE produtos SET status = 'Vendido' WHERE produtos.id = "
+                    +"(?)";
+            
+            try{
+                PreparedStatement stmt = this.conn.prepareStatement(sql);
+                stmt.setInt(1,produto.getId());
+                
+                stmt.execute();
+            }
+            catch (Exception e){
+                System.out.println("Erro ao atualizar status: "+ e.getMessage());
+            }
+        }
+    
     public List<ProdutosDTO> getProdutos(){
         String sql = "SELECT * FROM produtos";
         
